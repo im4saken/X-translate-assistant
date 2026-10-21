@@ -4,6 +4,11 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.4.1] - 2026-10-21
+### Fixed / 修正
+- Models that reject a custom `temperature` (for example OpenAI's reasoning models, which answer HTTP 400 "unsupported ... temperature") now work: the request is retried once without it, and the choice is remembered for that server and model until the browser restarts the extension. Other errors are shown as before and are not retried.
+  不接受自訂 `temperature` 的模型(例如 OpenAI 的推理型模型,會回應 HTTP 400「unsupported ... temperature」)現在可以正常使用:會自動不帶該參數重試一次,並在擴充功能重新啟動前記住該伺服器與模型的結果。其他錯誤仍照常顯示,不會重試。
+
 ## [1.4.0] - 2026-10-21
 ### Changed / 變更
 - The model is now chosen from a drop-down filled from your server's `/models` list (OpenAI, Ollama, LM Studio, DeepSeek, etc.) via a **Load models** button, with a filter box for long lists. "Type manually…" remains for servers that do not provide a list. The list refreshes automatically when the settings page opens, once Chrome has permission for your server.

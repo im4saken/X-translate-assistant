@@ -8,6 +8,8 @@ const DEFAULTS = {
 
 chrome.runtime.onMessage.addListener((m) => { if (m.type === "openOptions") chrome.runtime.openOptionsPage(); });
 
+const noTemperature = new Set();
+
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
 
 chrome.runtime.onConnect.addListener((port) => {
@@ -24,12 +26,27 @@ chrome.runtime.onConnect.addListener((port) => {
       const url = cfg.baseUrl.replace(/\/+$/, "") + "/chat/completions";
       const headers = { "Content-Type": "application/json" };
       if (cfg.apiKey) headers.Authorization = "Bearer " + cfg.apiKey;
-      const res = await fetch(url, {
-        method: "POST",
-        headers,
-        signal: controller.signal,
-        body: JSON.stringify({ model: cfg.model, messages: msg.messages, stream: true, temperature: 0.3 })
-      });
+      const post = (withTemperature) =>
+        fetch(url, {
+          method: "POST",
+          headers,
+          signal: controller.signal,
+          body: JSON.stringify({
+            model: cfg.model,
+            messages: msg.messages,
+            stream: true,
+            ...(withTemperature ? { temperature: 0.3 } : {})
+          })
+        });
+      // Some models (e.g. OpenAI's reasoning models) reject a custom temperature: retry once without it and remember.
+      const key = `${url}|${cfg.model}`;
+      let res = await post(!noTemperature.has(key));
+      if (res.status === 400 && !noTemperature.has(key)) {
+        const body = await res.text();
+        if (!/temperature/i.test(body)) throw new Error(`HTTP 400 from ${url}\n${body.slice(0, 300)}`);
+        noTemperature.add(key);
+        res = await post(false);
+      }
       if (!res.ok) {
         const body = await res.text();
         throw new Error(`HTTP ${res.status} from ${url}\n${body.slice(0, 300)}`);
