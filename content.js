@@ -46,6 +46,10 @@
     </div>
   </div>`;
 
+  let port = null;
+  let busy = false;
+  let chatHistory = [];
+
   const $ = (id) => root.getElementById(id);
   const panel = $("panel"), log = $("log"), input = $("input"), lang = $("lang");
 
@@ -98,10 +102,10 @@
     let acc = "";
     port = chrome.runtime.connect({ name: "llm" });
     port.onMessage.addListener((m) => {
-      if (m.type === "delta") { acc += m.text; out.textContent = acc; log.scrollTop = log.scrollHeight; }
+      if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; }
       if (m.type === "error") { out.className = "msg err"; out.textContent = m.text; finish(); }
       if (m.type === "done") {
-        history = [...messages, { role: "assistant", content: acc }];
+        chatHistory = [...messages, { role: "assistant", content: acc }];
         const a = document.createElement("div");
         a.className = "actions";
         const copy = document.createElement("button");
@@ -151,8 +155,8 @@
     const q = input.value.trim();
     if (!q) return;
     const post = getPostText();
-    const msgs = history.length
-      ? [...history, { role: "user", content: q }]
+    const msgs = chatHistory.length
+      ? [...chatHistory, { role: "user", content: q }]
       : [{ role: "system", content: SYS }, { role: "user", content: (post ? `Post I'm reading:\n${post}\n\n` : "") + q }];
     run(msgs, q);
     input.value = "";
