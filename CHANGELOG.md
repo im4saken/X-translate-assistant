@@ -4,6 +4,11 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.5.0] - 2026-10-21
+### Added / 新增
+- **Clear** button in the panel header: empties all messages, forgets the conversation so the next question starts fresh, and stops any answer that is still streaming.
+  對話視窗標題列新增 **Clear** 按鈕:清除所有訊息、忘記對話內容(下一個問題會重新開始),並停止仍在串流的回答。
+
 ## [1.4.1] - 2026-10-21
 ### Fixed / 修正
 - Models that reject a custom `temperature` (for example OpenAI's reasoning models, which answer HTTP 400 "unsupported ... temperature") now work: the request is retried once without it, and the choice is remembered for that server and model until the browser restarts the extension. Other errors are shown as before and are not retried.

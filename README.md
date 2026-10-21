@@ -10,6 +10,7 @@ A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Olla
 - Language drop-down with 20 common languages, or "Other…" to type any language
 - **Translate my reply** into any language, then Copy or Insert into X's reply box
 - Free-form questions about the post you're reading
+- **Clear** button wipes the panel and the conversation
 - Responses stream in; your text goes only to the endpoint you configure
 
 ## Install

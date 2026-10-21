@@ -36,7 +36,7 @@
   </style>
   <button id="fab" title="X Translate Assistant">✦</button>
   <div id="panel">
-    <header><span>X Translate Assistant</span><span><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
+    <header><span>X Translate Assistant</span><span><button id="clear" title="Clear all messages and start over" style="font-size:13px">Clear</button><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
     <div id="log"></div>
     <div class="tools">
       <button id="sum">Summarize this post</button>
@@ -124,6 +124,14 @@
     else { panel.classList.toggle("open"); placePanel(); }
   });
   $("close").onclick = () => panel.classList.remove("open");
+  // Clear: stop any running request, empty the log and forget the conversation.
+  $("clear").onclick = () => {
+    if (port) finish();
+    log.textContent = "";
+    chatHistory = [];
+    historyPath = "";
+    placePanel();
+  };
   $("gear").onclick = () => chrome.runtime.sendMessage({ type: "openOptions" });
 
   // Pick the post being read: the main post on a /status page, else the one nearest the viewport centre.

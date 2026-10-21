@@ -46,6 +46,8 @@ T9  On a post with replies, ask "How many replies are there?" and "What do the r
     think?": answers should be based on the loaded replies. Ask a follow-up: it
     remembers the previous answer. Then open a DIFFERENT post and ask again: the answer
     must be about the new post, not the old one.
+T9b Click "Clear" in the panel header: all messages disappear and the next question starts a
+    fresh conversation. Click Clear while an answer is still streaming: it stops.
 T10 Settings page: "Load models" fills the drop-down from your server (try a wrong key or
     URL: readable error, "Type manually…" still works). Change reply/summary language, Save, reload the extension:
     values persist. Use a wrong Base URL: expect a readable error, not a silent failure.
