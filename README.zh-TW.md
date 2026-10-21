@@ -13,7 +13,7 @@
 - 回應以串流方式即時顯示;你的文字只會送到你設定的端點
 
 ## 安裝
-從 [Releases 頁面](https://github.com/im4saken/x-llm-assistant/releases/latest)下載最新的 zip 檔並解壓縮,接著:
+從 [Releases 頁面](https://github.com/im4saken/X-translate-assistant/releases/latest)下載最新的 zip 檔並解壓縮,接著:
 
 1. 開啟 `chrome://extensions` → 開啟**開發人員模式** → 按**載入未封裝項目** → 選擇解壓縮後的資料夾。
 2. 開啟設定(對話視窗中的 ⚙,或工具列圖示)。填入 **Base URL**(例如 `http://localhost:11434/v1`)、**Model**(模型名稱)與選填的 **API key**,再按 **Test connection** 測試連線。Chrome 會詢問是否允許連線到該伺服器。

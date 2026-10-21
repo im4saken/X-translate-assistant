@@ -13,7 +13,7 @@ A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Olla
 - Responses stream in; your text goes only to the endpoint you configure
 
 ## Install
-Download the latest zip from the [Releases page](https://github.com/im4saken/x-llm-assistant/releases/latest), unzip it, then:
+Download the latest zip from the [Releases page](https://github.com/im4saken/X-translate-assistant/releases/latest), unzip it, then:
 
 1. Open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the unzipped folder.
 2. Open settings (⚙ in the chat panel, or the toolbar icon). Set **Base URL** (e.g. `http://localhost:11434/v1`), **Model** and an optional **API key**, then click **Test connection**. Chrome will ask permission to reach that server.
