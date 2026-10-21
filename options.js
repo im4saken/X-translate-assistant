@@ -3,16 +3,25 @@ const DEFAULTS = {
   apiKey: "",
   model: "",
   defaultLang: "English",
-  summaryLang: "Chinese"
+  summaryLang: "Traditional Chinese"
 };
 const ids = Object.keys(DEFAULTS);
+const langIds = ["defaultLang", "summaryLang"];
+const langGetters = {};
 const $ = (id) => document.getElementById(id);
 const status = (t) => ($("status").textContent = t);
 
-chrome.storage.sync.get(DEFAULTS).then((cfg) => ids.forEach((k) => ($(k).value = cfg[k])));
+chrome.storage.sync.get(DEFAULTS).then((cfg) => {
+  ids.forEach((k) => {
+    if (langIds.includes(k)) langGetters[k] = xllmLangControl($(k), $(k + "Other"), cfg[k]);
+    else $(k).value = cfg[k];
+  });
+});
 
 async function save() {
-  const cfg = Object.fromEntries(ids.map((k) => [k, $(k).value.trim()]));
+  const cfg = Object.fromEntries(ids.map((k) => [k, langGetters[k] ? langGetters[k]() : $(k).value.trim()]));
+  const missing = langIds.find((k) => !cfg[k]);
+  if (missing) { status("Type a language in the box next to the " + missing + " list."); return false; }
   const origin = new URL(cfg.baseUrl).origin + "/*";
   const granted = await chrome.permissions.request({ origins: [origin] });
   if (!granted) { status("Permission to reach " + origin + " was denied."); return false; }

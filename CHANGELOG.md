@@ -4,6 +4,19 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.2.0] - 2026-10-21
+### Added / 新增
+- "Summarize this post" now includes the replies: an original-post summary plus a replies summary (viewpoints grouped by theme, disagreements, overall tone). It covers the replies X has loaded on the page, up to 100; scroll down first to load more.
+  「摘要這則貼文」現在會一併摘要回覆:先是原貼文摘要,再是回覆摘要(依主題整理觀點、分歧與整體語氣)。範圍為 X 已載入頁面的回覆(最多 100 則);請先往下捲動以載入更多。
+- Target language for "Translate my reply" is a drop-down list of 20 common languages. Choose "Other…" to type any language in a text box. The last choice is remembered.
+  「翻譯我的回覆」的目標語言改為下拉選單,內含 20 種常用語言;選「其他…」可在文字框輸入任何語言。會記住上次的選擇。
+- The reply-language and summary-language settings use the same list.
+  設定頁的回覆語言與摘要語言也使用相同的選單。
+
+### Changed / 變更
+- Default summary language is now Traditional Chinese (was "Chinese"). A previously saved custom value is kept under "Other…".
+  預設摘要語言改為繁體中文(原為「Chinese」)。先前儲存的自訂值會保留在「其他…」中。
+
 ## [1.1.0] - 2026-10-21
 ### Added / 新增
 - Floating button is draggable and its position is remembered (stored locally, per machine).

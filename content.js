@@ -27,7 +27,9 @@
     .tools button, #send, .copy { border: 1px solid #536471; background: transparent; color: #e7e9ea; border-radius: 999px;
       padding: 5px 12px; cursor: pointer; font-size: 13px; }
     .tools button:hover, #send:hover, .copy:hover { background: #1d9bf0; border-color: #1d9bf0; }
-    .tools input { width: 90px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 8px; padding: 4px 8px; font-size: 13px; }
+    [hidden] { display: none !important; }
+    .tools select { max-width: 150px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 8px; padding: 4px 6px; font-size: 13px; }
+    .tools input { width: 130px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 8px; padding: 4px 8px; font-size: 13px; }
     .row { display: flex; gap: 6px; padding: 8px 14px 12px; border-top: 1px solid #2f3336; }
     textarea { flex: 1; resize: none; height: 56px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 10px; padding: 8px; font-size: 14px; }
     .actions { margin-top: 6px; display: flex; gap: 6px; }
@@ -39,7 +41,8 @@
     <div class="tools">
       <button id="sum">Summarize this post</button>
       <button id="tr">Translate my reply →</button>
-      <input id="lang" title="Target language">
+      <select id="lang" title="Target language for Translate"></select>
+      <input id="langOther" hidden placeholder="Language, e.g. Swahili">
     </div>
     <div class="row">
       <textarea id="input" placeholder="Type your reply (any language) and press Translate, or ask a question about the post"></textarea>
@@ -52,9 +55,16 @@
   let chatHistory = [];
 
   const $ = (id) => root.getElementById(id);
-  const panel = $("panel"), log = $("log"), input = $("input"), lang = $("lang");
+  const panel = $("panel"), log = $("log"), input = $("input"), lang = $("lang"), langOther = $("langOther");
 
-  chrome.storage.sync.get({ defaultLang: "English", summaryLang: "Chinese" }).then((c) => (lang.value = c.defaultLang));
+  let getLang = () => lang.value;
+  const initLang = (value) => {
+    getLang = xllmLangControl(lang, langOther, value, () => {
+      const v = getLang();
+      if (v) chrome.storage.sync.set({ defaultLang: v });
+    });
+  };
+  chrome.storage.sync.get({ defaultLang: "English" }).then((c) => initLang(c.defaultLang), () => initLang("English"));
 
   // Floating button: draggable, position remembered (stored as viewport fractions).
   const fab = $("fab"), FAB = 48, MARGIN = 8;
@@ -182,21 +192,63 @@
 
   const SYS = "You are an assistant embedded in the X (Twitter) web interface. Be concise and accurate. Never invent facts that are not in the post.";
 
+  function articleInfo(a) {
+    const author = a.querySelector('[data-testid="User-Name"]')?.innerText.replace(/\n/g, " ") || "";
+    const text = [...a.querySelectorAll('[data-testid="tweetText"]')].map((t) => t.innerText).join("\n--- quoted post ---\n");
+    return { author, text };
+  }
+
+  // On a /status page: the focal post plus the replies X has loaded below it.
+  function getThread() {
+    const m = location.pathname.match(/\/status\/(\d+)/);
+    if (!m) return null;
+    const arts = [...document.querySelectorAll('article[data-testid="tweet"]')];
+    if (!arts.length) return null;
+    const i = Math.max(0, arts.findIndex((a) => a.querySelector(`a[href$="/status/${m[1]}"]`)));
+    const replies = arts.slice(i + 1).map(articleInfo).filter((r) => r.text);
+    return { post: articleInfo(arts[i]), replies };
+  }
+
+  const MAX_REPLIES = 100, MAX_REPLY_CHARS = 500;
+
   $("sum").onclick = async () => {
-    const post = getPostText();
-    if (!post) return add("err", "No post found on this page.");
-    const { summaryLang } = await chrome.storage.sync.get({ summaryLang: "Chinese" });
+    const { summaryLang } = await chrome.storage.sync.get({ summaryLang: "Traditional Chinese" });
+    const thread = getThread();
+
+    if (!thread) {
+      const post = getPostText();
+      if (!post) return add("err", "No post found on this page.");
+      return run([
+        { role: "system", content: SYS },
+        { role: "user", content: `Summarize this post in ${summaryLang} in 2-4 sentences. If it is not in ${summaryLang}, include a faithful translation first.\n\n${post}` }
+      ], "Summarize this post");
+    }
+
+    if (!thread.post.text) return add("err", "Could not read the post text on this page.");
+    const used = thread.replies.slice(0, MAX_REPLIES);
+    const replyBlock = used
+      .map((r, n) => `[${n + 1}] ${r.author}: ${r.text.length > MAX_REPLY_CHARS ? r.text.slice(0, MAX_REPLY_CHARS) + "…" : r.text}`)
+      .join("\n\n");
+    const note = thread.replies.length > MAX_REPLIES ? ` (first ${MAX_REPLIES} of ${thread.replies.length} loaded)` : "";
     run([
       { role: "system", content: SYS },
-      { role: "user", content: `Summarize this post in ${summaryLang} in 2-4 sentences. If it is not in ${summaryLang}, include a faithful translation first.\n\n${post}` }
-    ], "Summarize this post");
+      { role: "user", content:
+        `Below is an X post and the replies currently loaded on the page: ${used.length} replies${note}. X loads replies gradually, so there may be more that are not included.\n` +
+        `Write in ${summaryLang} with exactly two sections, translating the headings into ${summaryLang}:\n` +
+        `1. "Original post summary": 2-4 sentences. If the post is not in ${summaryLang}, give a faithful translation first.\n` +
+        `2. "Replies summary": the main viewpoints grouped by theme, notable disagreements or questions, and the overall tone. Mention a reply's author only when it matters. ` +
+        `If there are no replies, say that none were loaded.\n` +
+        `Use only the content below; do not invent anything.\n\n` +
+        `=== ORIGINAL POST ===\n${thread.post.author}\n${thread.post.text}\n\n=== REPLIES ===\n${replyBlock || "(none loaded)"}` }
+    ], `Summarize this post + ${used.length} replies` + (used.length ? " (scroll down first to load more replies)" : ""));
   };
 
   $("tr").onclick = () => {
     const draft = input.value.trim();
     if (!draft) return add("err", "Type your reply in the box first.");
     const post = getPostText();
-    const target = lang.value.trim() || "English";
+    const target = getLang();
+    if (!target) return add("err", "Type the target language in the box next to the list.");
     run([
       { role: "system", content: SYS },
       { role: "user", content:

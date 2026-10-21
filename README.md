@@ -6,7 +6,8 @@ A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Olla
 
 ## Features
 - Draggable ✦ button on x.com opens a small chat window; its position is remembered
-- **Summarize this post** in a language you choose
+- **Summarize this post** in a language you choose, with a separate summary of the replies loaded on the page
+- Language drop-down with 20 common languages, or "Other…" to type any language
 - **Translate my reply** into any language, then Copy or Insert into X's reply box
 - Free-form questions about the post you're reading
 - Responses stream in; your text goes only to the endpoint you configure
