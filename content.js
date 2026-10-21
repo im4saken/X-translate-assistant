@@ -33,7 +33,7 @@
   </style>
   <button id="fab" title="X LLM Assistant">✦</button>
   <div id="panel">
-    <header><span>X LLM Assistant</span><button id="close">✕</button></header>
+    <header><span>X LLM Assistant</span><span><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
     <div id="log"></div>
     <div class="tools">
       <button id="sum">Summarize this post</button>
@@ -53,6 +53,7 @@
 
   $("fab").onclick = () => panel.classList.toggle("open");
   $("close").onclick = () => panel.classList.remove("open");
+  $("gear").onclick = () => chrome.runtime.sendMessage({ type: "openOptions" });
 
   // Pick the post being read: the main post on a /status page, else the one nearest the viewport centre.
   function getPostText() {

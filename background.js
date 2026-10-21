@@ -6,6 +6,8 @@ const DEFAULTS = {
   summaryLang: "Chinese"
 };
 
+chrome.runtime.onMessage.addListener((m) => { if (m.type === "openOptions") chrome.runtime.openOptionsPage(); });
+
 chrome.action.onClicked.addListener(() => chrome.runtime.openOptionsPage());
 
 chrome.runtime.onConnect.addListener((port) => {
