@@ -1,9 +1,12 @@
+**English** | [繁體中文](README.zh-TW.md)
+
 # X LLM Assistant
 
-A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Ollama, LM Studio, llama.cpp server, a hosted API, etc.).
+A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Ollama, LM Studio, oMLX, llama.cpp server, a hosted API, etc.), so it doesn't use up Grok credits.
 
-- Floating ✦ button on x.com opens a small chat window
-- **Summarize this post** (in a language you choose)
+## Features
+- Draggable ✦ button on x.com opens a small chat window; its position is remembered
+- **Summarize this post** in a language you choose
 - **Translate my reply** into any language, then Copy or Insert into X's reply box
 - Free-form questions about the post you're reading
 - Responses stream in; your text goes only to the endpoint you configure
@@ -11,11 +14,12 @@ A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Olla
 ## Install
 Download the latest zip from the [Releases page](https://github.com/im4saken/x-llm-assistant/releases/latest), unzip it, then:
 
-1. `chrome://extensions` → enable Developer mode → Load unpacked → select this folder.
-2. Click the toolbar icon, set Base URL (e.g. `http://localhost:11434/v1`), model name and optional API key, then Test connection.
+1. Open `chrome://extensions` → enable **Developer mode** → **Load unpacked** → select the unzipped folder.
+2. Open settings (⚙ in the chat panel, or the toolbar icon). Set **Base URL** (e.g. `http://localhost:11434/v1`), **Model** and an optional **API key**, then click **Test connection**. Chrome will ask permission to reach that server.
 
-Ollama may reject extension requests with 403; start it with `OLLAMA_ORIGINS="chrome-extension://*"`.
-
-Post detection relies on X's current page structure (`data-testid` attributes) and may need updates if X changes it.
+## Notes
+- Ollama may reject extension requests with 403; start it with `OLLAMA_ORIGINS="chrome-extension://*"`.
+- If the model runs on another machine, use that machine's Tailscale/LAN address instead of `localhost`.
+- Post detection relies on X's current page structure (`data-testid` attributes) and may need updates if X changes it.
 
 See [CHANGELOG.md](CHANGELOG.md) for version history.
