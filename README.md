@@ -9,9 +9,13 @@ A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Olla
 - Responses stream in; your text goes only to the endpoint you configure
 
 ## Install
+Download the latest zip from the [Releases page](https://github.com/im4saken/x-llm-assistant/releases/latest), unzip it, then:
+
 1. `chrome://extensions` → enable Developer mode → Load unpacked → select this folder.
 2. Click the toolbar icon, set Base URL (e.g. `http://localhost:11434/v1`), model name and optional API key, then Test connection.
 
 Ollama may reject extension requests with 403; start it with `OLLAMA_ORIGINS="chrome-extension://*"`.
 
 Post detection relies on X's current page structure (`data-testid` attributes) and may need updates if X changes it.
+
+See [CHANGELOG.md](CHANGELOG.md) for version history.
