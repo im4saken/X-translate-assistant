@@ -15,8 +15,8 @@ Repo: https://github.com/im4saken/X-translate-assistant
 2. Chrome → chrome://extensions → 開啟「開發人員模式」→「載入未封裝項目」→ 選擇解壓縮後的資料夾。
 3. 點對話視窗中的 ⚙(或工具列圖示)。填入:
    - Base URL(OpenAI 相容,結尾為 /v1;例如 Ollama 用 http://localhost:11434/v1)
-   - Model(伺服器使用的確切模型名稱)
    - API key(選填)
+   - 按「Load models」並從清單選擇模型(或選「Type manually…」手動輸入)
    按「Test connection」。應顯示「Connection OK.」並跳出 Chrome 權限詢問。
    Ollama 使用者:若出現 403,請用 OLLAMA_ORIGINS="chrome-extension://*" 啟動。
 4. 登入 x.com 並重新整理分頁。
@@ -38,7 +38,8 @@ T8  在貼文打開回覆框,執行翻譯後按「Insert into reply box」:文�
     仍可正常發文。也請測試「Copy」。
 T9  在有回覆的貼文上問「有幾則回覆?」與「大家的回覆怎麼看?」:答案應根據已載入的回覆。
     再追問一次,應記得前一個回答。接著開啟「另一則」貼文再問:答案必須針對新貼文,而非舊的。
-T10 設定頁:修改回覆/摘要語言並儲存,重新載入擴充功能後數值應保留。
+T10 設定頁:「Load models」會從你的伺服器載入模型下拉清單(故意用錯的 key 或網址:應顯示可讀的錯誤,
+    且「Type manually…」仍可用)。修改回覆/摘要語言並儲存,重新載入擴充功能後數值應保留。
     故意填錯 Base URL:應顯示可讀的錯誤訊息,而不是無聲失敗。
 T11 若有「思考型」模型請測試:輸出開頭不應有空白行。
 T12 進行 T1–T10 時開啟瀏覽器主控台(F12):回報擴充功能產生的任何紅色錯誤。

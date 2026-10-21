@@ -15,8 +15,11 @@
   <input id="baseUrl" placeholder="http://100.x.x.x:11434/v1"></label>
 <label>API key <small>(leave empty if your server doesn't need one)</small>
   <input id="apiKey" type="password"></label>
-<label>Model <small>(exact name your server uses)</small>
-  <input id="model" placeholder="qwen2.5:27b"></label>
+<label>Model <small>(click "Load models" to fetch the list from your server)</small>
+  <select id="model"></select>
+  <input id="modelOther" hidden placeholder="Model name, e.g. qwen2.5:27b">
+  <input id="modelFilter" hidden placeholder="Filter models…"></label>
+<button id="loadModels" type="button" style="margin-top:6px">Load models</button>
 <label>Default reply language <small>(what "Translate my reply" targets)</small>
   <select id="defaultLang"></select>
   <input id="defaultLangOther" hidden placeholder="Language, e.g. Swahili"></label>

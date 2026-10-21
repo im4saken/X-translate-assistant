@@ -16,8 +16,8 @@ SETUP
    select the unzipped folder.
 3. Click the ⚙ in the chat panel (or the toolbar icon). Set:
    - Base URL (OpenAI-compatible, ending in /v1; e.g. http://localhost:11434/v1 for Ollama)
-   - Model (exact name your server uses)
    - API key (optional)
+   - Click "Load models" and pick a model from the list (or "Type manually…")
    Click "Test connection". Expect "Connection OK." and Chrome's permission prompt.
    Ollama users: start it with OLLAMA_ORIGINS="chrome-extension://*" if you get a 403.
 4. Log in to x.com. Refresh the tab.
@@ -46,7 +46,8 @@ T9  On a post with replies, ask "How many replies are there?" and "What do the r
     think?": answers should be based on the loaded replies. Ask a follow-up: it
     remembers the previous answer. Then open a DIFFERENT post and ask again: the answer
     must be about the new post, not the old one.
-T10 Settings page: change reply/summary language, Save, reload the extension:
+T10 Settings page: "Load models" fills the drop-down from your server (try a wrong key or
+    URL: readable error, "Type manually…" still works). Change reply/summary language, Save, reload the extension:
     values persist. Use a wrong Base URL: expect a readable error, not a silent failure.
 T11 Use a "thinking" model if you have one: output should not start with blank lines.
 T12 Open the browser console (F12) while doing T1–T10: report any red errors from the extension.

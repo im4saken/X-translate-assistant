@@ -16,7 +16,7 @@
 從 [Releases 頁面](https://github.com/im4saken/X-translate-assistant/releases/latest)下載最新的 zip 檔並解壓縮,接著:
 
 1. 開啟 `chrome://extensions` → 開啟**開發人員模式** → 按**載入未封裝項目** → 選擇解壓縮後的資料夾。
-2. 開啟設定(對話視窗中的 ⚙,或工具列圖示)。填入 **Base URL**(例如 `http://localhost:11434/v1`)、**Model**(模型名稱)與選填的 **API key**,再按 **Test connection** 測試連線。Chrome 會詢問是否允許連線到該伺服器。
+2. 開啟設定(對話視窗中的 ⚙,或工具列圖示)。填入 **Base URL**(例如 `http://localhost:11434/v1`)與選填的 **API key**,按 **Load models** 從清單選擇模型(或選「Type manually…」手動輸入),再按 **Test connection** 測試連線。Chrome 會詢問是否允許連線到該伺服器。
 
 ## 注意事項
 - Ollama 可能會以 403 拒絕擴充功能的請求;請用 `OLLAMA_ORIGINS="chrome-extension://*"` 啟動。

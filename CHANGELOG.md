@@ -4,6 +4,13 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.4.0] - 2026-10-21
+### Changed / 變更
+- The model is now chosen from a drop-down filled from your server's `/models` list (OpenAI, Ollama, LM Studio, DeepSeek, etc.) via a **Load models** button, with a filter box for long lists. "Type manually…" remains for servers that do not provide a list. The list refreshes automatically when the settings page opens, once Chrome has permission for your server.
+  模型改由下拉選單選擇,清單透過 **Load models** 按鈕從伺服器的 `/models` 取得(OpenAI、Ollama、LM Studio、DeepSeek 等),清單很長時可用篩選框。對於不提供清單的伺服器,仍可選「Type manually…」手動輸入。Chrome 取得你伺服器的權限後,開啟設定頁時會自動更新清單。
+- Saving now requires a model to be chosen, with a clear message otherwise.
+  儲存時必須選擇模型,否則會顯示清楚的提示。
+
 ## [1.3.0] - 2026-10-21
 ### Changed / 變更
 - Renamed the extension to "X Translate Assistant" to match the repository (extension name, panel title, settings page, READMEs). The release zip is now named `X-translate-assistant-vX.Y.Z.zip` and unzips to an `X-translate-assistant` folder. Your saved settings are kept if you reload the extension from the same folder; a new folder path counts as a new install and the settings must be entered again.
