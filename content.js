@@ -53,6 +53,7 @@
   let port = null;
   let busy = false;
   let chatHistory = [];
+  let historyPath = "";
 
   const $ = (id) => root.getElementById(id);
   const panel = $("panel"), log = $("log"), input = $("input"), lang = $("lang"), langOther = $("langOther");
@@ -161,7 +162,7 @@
     document.execCommand("insertText", false, text);
   }
 
-  function run(messages, label) {
+  function run(messages, label, keep) {
     if (busy) return;
     busy = true;
     if (label) add("user", label);
@@ -172,7 +173,7 @@
       if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; placePanel(); }
       if (m.type === "error") { out.className = "msg err"; out.textContent = m.text; finish(); }
       if (m.type === "done") {
-        chatHistory = [...messages, { role: "assistant", content: acc }];
+        if (keep) { chatHistory = [...messages, { role: "assistant", content: acc }]; historyPath = location.pathname; }
         const a = document.createElement("div");
         a.className = "actions";
         const copy = document.createElement("button");
@@ -210,6 +211,18 @@
   }
 
   const MAX_REPLIES = 100, MAX_REPLY_CHARS = 500;
+  const repliesWord = (n) => `${n} repl${n === 1 ? "y" : "ies"}`;
+
+  // The original post plus the loaded replies, formatted for a prompt.
+  function threadContext(thread) {
+    const used = thread.replies.slice(0, MAX_REPLIES);
+    const replyBlock = used
+      .map((r, n) => `[${n + 1}] ${r.author}: ${r.text.length > MAX_REPLY_CHARS ? r.text.slice(0, MAX_REPLY_CHARS) + "…" : r.text}`)
+      .join("\n\n");
+    const note = thread.replies.length > MAX_REPLIES ? ` (first ${MAX_REPLIES} of ${thread.replies.length} loaded)` : "";
+    const block = `=== ORIGINAL POST ===\n${thread.post.author}\n${thread.post.text}\n\n=== REPLIES ===\n${replyBlock || "(none loaded)"}`;
+    return { block, count: used.length, note };
+  }
 
   $("sum").onclick = async () => {
     const { summaryLang } = await chrome.storage.sync.get({ summaryLang: "Traditional Chinese" });
@@ -221,26 +234,22 @@
       return run([
         { role: "system", content: SYS },
         { role: "user", content: `Summarize this post in ${summaryLang} in 2-4 sentences. If it is not in ${summaryLang}, include a faithful translation first.\n\n${post}` }
-      ], "Summarize this post");
+      ], "Summarize this post", true);
     }
 
     if (!thread.post.text) return add("err", "Could not read the post text on this page.");
-    const used = thread.replies.slice(0, MAX_REPLIES);
-    const replyBlock = used
-      .map((r, n) => `[${n + 1}] ${r.author}: ${r.text.length > MAX_REPLY_CHARS ? r.text.slice(0, MAX_REPLY_CHARS) + "…" : r.text}`)
-      .join("\n\n");
-    const note = thread.replies.length > MAX_REPLIES ? ` (first ${MAX_REPLIES} of ${thread.replies.length} loaded)` : "";
+    const { block, count, note } = threadContext(thread);
     run([
       { role: "system", content: SYS },
       { role: "user", content:
-        `Below is an X post and the replies currently loaded on the page: ${used.length} replies${note}. X loads replies gradually, so there may be more that are not included.\n` +
+        `Below is an X post and the replies currently loaded on the page: ${repliesWord(count)}${note}. X loads replies gradually, so there may be more that are not included.\n` +
         `Write in ${summaryLang} with exactly two sections, translating the headings into ${summaryLang}:\n` +
         `1. "Original post summary": 2-4 sentences. If the post is not in ${summaryLang}, give a faithful translation first.\n` +
         `2. "Replies summary": the main viewpoints grouped by theme, notable disagreements or questions, and the overall tone. Mention a reply's author only when it matters. ` +
         `If there are no replies, say that none were loaded.\n` +
         `Use only the content below; do not invent anything.\n\n` +
-        `=== ORIGINAL POST ===\n${thread.post.author}\n${thread.post.text}\n\n=== REPLIES ===\n${replyBlock || "(none loaded)"}` }
-    ], `Summarize this post + ${used.length} replies` + (used.length ? " (scroll down first to load more replies)" : ""));
+        block }
+    ], `Summarize this post + ${repliesWord(count)}` + (count ? " (scroll down first to load more replies)" : ""), true);
   };
 
   $("tr").onclick = () => {
@@ -263,11 +272,21 @@
   $("send").onclick = () => {
     const q = input.value.trim();
     if (!q) return;
-    const post = getPostText();
-    const msgs = chatHistory.length
-      ? [...chatHistory, { role: "user", content: q }]
-      : [{ role: "system", content: SYS }, { role: "user", content: (post ? `Post I'm reading:\n${post}\n\n` : "") + q }];
-    run(msgs, q);
+    // Continue the conversation only while we are still on the same page; otherwise rebuild the context.
+    if (chatHistory.length && historyPath === location.pathname) {
+      run([...chatHistory, { role: "user", content: q }], q, true);
+    } else {
+      const thread = getThread();
+      let context = "";
+      if (thread && thread.post.text) {
+        const { block, count, note } = threadContext(thread);
+        context = `Post I'm reading, with the replies currently loaded on the page (${repliesWord(count)}${note}; there may be more that are not loaded):\n${block}\n\n`;
+      } else {
+        const post = getPostText();
+        if (post) context = `Post I'm reading:\n${post}\n\n`;
+      }
+      run([{ role: "system", content: SYS }, { role: "user", content: context + q }], q, true);
+    }
     input.value = "";
   };
 

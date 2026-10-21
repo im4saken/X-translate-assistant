@@ -4,6 +4,17 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.2.1] - 2026-10-21
+### Fixed / 修正
+- "Ask" now includes the replies loaded on the page, like "Summarize" does, so questions such as "how many replies?" or "what do the replies think?" can be answered. Found in a browser test.
+  「提問」現在會像「摘要」一樣納入頁面已載入的回覆,因此能回答「有幾則回覆?」「大家的回覆怎麼看?」等問題。此問題由瀏覽器測試發現。
+- Follow-up questions no longer carry over the previous post's context after you navigate to a different post; the conversation restarts with the new page.
+  切換到另一則貼文後,追問不再沿用上一則貼文的內容,對話會以新頁面重新開始。
+- Translating a reply no longer overwrites the conversation history used by follow-up questions.
+  翻譯回覆不再覆蓋追問所使用的對話紀錄。
+- Grammar: "1 reply" instead of "1 replies".
+  文法修正:顯示「1 reply」而非「1 replies」。
+
 ## [1.2.0] - 2026-10-21
 ### Added / 新增
 - "Summarize this post" now includes the replies: an original-post summary plus a replies summary (viewpoints grouped by theme, disagreements, overall tone). It covers the replies X has loaded on the page, up to 100; scroll down first to load more.
