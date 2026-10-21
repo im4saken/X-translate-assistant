@@ -11,6 +11,7 @@
 - **翻譯我的回覆**:把你寫的回覆翻成任何語言,再用「複製」或「插入回覆框」送進 X 的回覆輸入框
 - 針對正在閱讀的貼文自由提問
 - **Clear** 按鈕可清除視窗內容與對話紀錄
+- 介面語言:英文、繁體中文、簡體中文,或跟隨瀏覽器語言(設定 → 介面語言)
 - 回應以串流方式即時顯示;你的文字只會送到你設定的端點
 
 ## 安裝
@@ -23,5 +24,8 @@
 - Ollama 可能會以 403 拒絕擴充功能的請求;請用 `OLLAMA_ORIGINS="chrome-extension://*"` 啟動。
 - 若模型跑在另一台機器上,請使用該機器的 Tailscale 或區域網路位址,不要用 `localhost`。
 - 貼文偵測依賴 X 目前的頁面結構(`data-testid` 屬性),X 改版後可能需要更新。
+
+## 新增語言
+英文內建於 `i18n.js`;其他語言各是 `locales/` 內的一個檔案,只在用到時才載入。要新增語言,請把 `locales/zh-TW.json` 複製為 `locales/<代碼>.json` 並翻譯其中的值(保留鍵名與 `{佔位符}`),再把 `<代碼>` 加入 `i18n.js` 的 `XLLM_LOCALES`、`background.js` 的 `LOCALES` 與 `options.js` 的 `UI_OPTIONS`。歡迎提交 Pull Request。
 
 想幫忙測試?請見[測試指南](TESTING.zh-TW.md)。版本歷史請見 [CHANGELOG.md](CHANGELOG.md)。

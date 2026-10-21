@@ -48,6 +48,9 @@ T9  On a post with replies, ask "How many replies are there?" and "What do the r
     must be about the new post, not the old one.
 T9b Click "Clear" in the panel header: all messages disappear and the next question starts a
     fresh conversation. Click Clear while an answer is still streaming: it stops.
+T13 Interface language: in Settings choose English, 繁體中文, 简体中文 and "Follow browser language".
+    The settings page and the ✦ panel (reload x.com once) switch language; labels, buttons, placeholders
+    and error messages are all translated, with no leftover English in a Chinese interface.
 T10 Settings page: "Load models" fills the drop-down from your server (try a wrong key or
     URL: readable error, "Type manually…" still works). Change reply/summary language, Save, reload the extension:
     values persist. Use a wrong Base URL: expect a readable error, not a silent failure.

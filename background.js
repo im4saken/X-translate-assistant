@@ -6,7 +6,19 @@ const DEFAULTS = {
   summaryLang: "Chinese"
 };
 
-chrome.runtime.onMessage.addListener((m) => { if (m.type === "openOptions") chrome.runtime.openOptionsPage(); });
+const LOCALES = ["zh-TW", "zh-CN"];
+
+chrome.runtime.onMessage.addListener((m, _sender, sendResponse) => {
+  if (m.type === "openOptions") chrome.runtime.openOptionsPage();
+  if (m.type === "getLocale") {
+    if (!LOCALES.includes(m.lang)) { sendResponse({ ok: false }); return; }
+    fetch(chrome.runtime.getURL(`locales/${m.lang}.json`))
+      .then((r) => r.json())
+      .then((strings) => sendResponse({ ok: true, strings }))
+      .catch(() => sendResponse({ ok: false }));
+    return true; // keep the channel open for the async response
+  }
+});
 
 const noTemperature = new Set();
 
@@ -22,7 +34,7 @@ chrome.runtime.onConnect.addListener((port) => {
     controller = new AbortController();
     try {
       const cfg = { ...DEFAULTS, ...(await chrome.storage.sync.get(DEFAULTS)) };
-      if (!cfg.model) throw new Error("No model set. Open the extension settings first.");
+      if (!cfg.model) { port.postMessage({ type: "error", code: "no-model", text: "No model set. Open the settings first." }); return; }
       const url = cfg.baseUrl.replace(/\/+$/, "") + "/chat/completions";
       const headers = { "Content-Type": "application/json" };
       if (cfg.apiKey) headers.Authorization = "Bearer " + cfg.apiKey;

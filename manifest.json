@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Translate Assistant",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Grok-style helper on X: summarize the post you're reading and translate your reply, using your own OpenAI-compatible LLM.",
   "permissions": ["storage"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
@@ -9,7 +9,7 @@
   "content_scripts": [
     {
       "matches": ["https://x.com/*", "https://twitter.com/*"],
-      "js": ["langs.js", "content.js"],
+      "js": ["i18n.js", "langs.js", "content.js"],
       "run_at": "document_idle"
     }
   ],

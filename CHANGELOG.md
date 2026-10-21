@@ -4,6 +4,17 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.6.0] - 2026-10-21
+### Added / 新增
+- **Interface language** setting: English, Traditional Chinese (繁體中文), Simplified Chinese (简体中文), or "Follow browser language" (the default). It applies to the settings page and the ✦ panel, and changes take effect immediately.
+  新增**介面語言**設定:English、繁體中文、简体中文,或「跟隨瀏覽器語言」(預設)。套用於設定頁與 ✦ 視窗,變更後立即生效。
+- English is built in; Chinese lives in separate files (`locales/zh-TW.json`, `locales/zh-CN.json`) that are loaded only when needed, so adding a language is just adding one file (see README).
+  英文內建;中文放在獨立檔案(`locales/zh-TW.json`、`locales/zh-CN.json`),只在需要時才載入,因此新增語言只需新增一個檔案(見 README)。
+
+### Notes / 備註
+- Text sent to the model (prompts) stays in English; only what you see is translated. The extension name shown in Chrome's extension list is not translated.
+  傳給模型的提示詞維持英文,只翻譯你看到的介面。Chrome 擴充功能清單中的名稱不翻譯。
+
 ## [1.5.0] - 2026-10-21
 ### Added / 新增
 - **Clear** button in the panel header: empties all messages, forgets the conversation so the next question starts fresh, and stops any answer that is still streaming.

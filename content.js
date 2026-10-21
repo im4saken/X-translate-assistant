@@ -36,17 +36,17 @@
   </style>
   <button id="fab" title="X Translate Assistant">✦</button>
   <div id="panel">
-    <header><span>X Translate Assistant</span><span><button id="clear" title="Clear all messages and start over" style="font-size:13px">Clear</button><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
+    <header><span>X Translate Assistant</span><span><button id="clear" data-i18n="clear" data-i18n-title="clearTip" style="font-size:13px"></button><button id="gear" data-i18n-title="settingsTip">⚙</button><button id="close">✕</button></span></header>
     <div id="log"></div>
     <div class="tools">
-      <button id="sum">Summarize this post</button>
-      <button id="tr">Translate my reply →</button>
-      <select id="lang" title="Target language for Translate"></select>
-      <input id="langOther" hidden placeholder="Language, e.g. Swahili">
+      <button id="sum" data-i18n="summarize"></button>
+      <button id="tr" data-i18n="translateBtn"></button>
+      <select id="lang" data-i18n-title="langTip"></select>
+      <input id="langOther" hidden data-i18n-ph="langOtherPh">
     </div>
     <div class="row">
-      <textarea id="input" placeholder="Type your reply (any language) and press Translate, or ask a question about the post"></textarea>
-      <button id="send">Ask</button>
+      <textarea id="input" data-i18n-ph="inputPh"></textarea>
+      <button id="send" data-i18n="ask"></button>
     </div>
   </div>`;
 
@@ -57,6 +57,14 @@
 
   const $ = (id) => root.getElementById(id);
   const panel = $("panel"), log = $("log"), input = $("input"), lang = $("lang"), langOther = $("langOther");
+
+  xllmApply(root); // browser language until the saved setting loads
+  // Interface language: follow the browser unless the user picked one. Re-applied live when settings change.
+  const applyUi = () => { xllmApply(root); getLang.relabel && getLang.relabel(); };
+  chrome.storage.sync.get({ uiLang: "auto" }).then((c) => xllmSetLang(c.uiLang)).then(applyUi, applyUi);
+  chrome.storage.onChanged.addListener((ch, area) => {
+    if (area === "sync" && ch.uiLang) xllmSetLang(ch.uiLang.newValue).then(applyUi);
+  });
 
   let getLang = () => lang.value;
   const initLang = (value) => {
@@ -164,7 +172,7 @@
 
   function insertIntoReplyBox(text) {
     const box = document.querySelector('[data-testid="tweetTextarea_0"]');
-    if (!box) { add("err", "Reply box not found. Click Reply on the post first, then try again."); return; }
+    if (!box) { add("err", xt("errNoReplyBox")); return; }
     box.focus();
     document.execCommand("selectAll", false, null);
     document.execCommand("insertText", false, text);
@@ -179,16 +187,16 @@
     port = chrome.runtime.connect({ name: "llm" });
     port.onMessage.addListener((m) => {
       if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; placePanel(); }
-      if (m.type === "error") { out.className = "msg err"; out.textContent = m.text; finish(); }
+      if (m.type === "error") { out.className = "msg err"; out.textContent = m.code === "no-model" ? xt("errNoModel") : m.text; finish(); }
       if (m.type === "done") {
         if (keep) { chatHistory = [...messages, { role: "assistant", content: acc }]; historyPath = location.pathname; }
         const a = document.createElement("div");
         a.className = "actions";
         const copy = document.createElement("button");
-        copy.className = "copy"; copy.textContent = "Copy";
+        copy.className = "copy"; copy.textContent = xt("copy");
         copy.onclick = () => navigator.clipboard.writeText(acc);
         const ins = document.createElement("button");
-        ins.className = "copy"; ins.textContent = "Insert into reply box";
+        ins.className = "copy"; ins.textContent = xt("insert");
         ins.onclick = () => insertIntoReplyBox(acc);
         a.append(copy, ins);
         out.appendChild(a);
@@ -238,14 +246,14 @@
 
     if (!thread) {
       const post = getPostText();
-      if (!post) return add("err", "No post found on this page.");
+      if (!post) return add("err", xt("errNoPost"));
       return run([
         { role: "system", content: SYS },
         { role: "user", content: `Summarize this post in ${summaryLang} in 2-4 sentences. If it is not in ${summaryLang}, include a faithful translation first.\n\n${post}` }
-      ], "Summarize this post", true);
+      ], xt("summarize"), true);
     }
 
-    if (!thread.post.text) return add("err", "Could not read the post text on this page.");
+    if (!thread.post.text) return add("err", xt("errNoPostText"));
     const { block, count, note } = threadContext(thread);
     run([
       { role: "system", content: SYS },
@@ -257,15 +265,15 @@
         `If there are no replies, say that none were loaded.\n` +
         `Use only the content below; do not invent anything.\n\n` +
         block }
-    ], `Summarize this post + ${repliesWord(count)}` + (count ? " (scroll down first to load more replies)" : ""), true);
+    ], xt("sumLabelReplies", { replies: xtReplies(count) }) + (count ? xt("scrollHint") : ""), true);
   };
 
   $("tr").onclick = () => {
     const draft = input.value.trim();
-    if (!draft) return add("err", "Type your reply in the box first.");
+    if (!draft) return add("err", xt("errNoDraft"));
     const post = getPostText();
     const target = getLang();
-    if (!target) return add("err", "Type the target language in the box next to the list.");
+    if (!target) return add("err", xt("errNoLang"));
     run([
       { role: "system", content: SYS },
       { role: "user", content:
@@ -273,7 +281,7 @@
         `Output ONLY the translated text, nothing else.` +
         (post ? `\n\nFor context, I am replying to this post:\n${post}` : "") +
         `\n\nMy draft:\n${draft}` }
-    ], `Translate to ${target}: ${draft}`);
+    ], xt("translateLabel", { lang: target, draft }));
     input.value = "";
   };
 

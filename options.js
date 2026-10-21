@@ -3,13 +3,39 @@ const DEFAULTS = {
   apiKey: "",
   model: "",
   defaultLang: "English",
-  summaryLang: "Traditional Chinese"
+  summaryLang: "Traditional Chinese",
+  uiLang: "auto"
 };
 const ids = Object.keys(DEFAULTS);
 const langIds = ["defaultLang", "summaryLang"];
 const langGetters = {};
 const $ = (id) => document.getElementById(id);
 const status = (t) => ($("status").textContent = t);
+
+// Interface language: "auto" follows the browser. Applied live; persisted on Save.
+const UI_OPTIONS = [["auto", null], ["en", "English"], ["zh-TW", "繁體中文"], ["zh-CN", "简体中文"]];
+function buildUiLang(current) {
+  const sel = $("uiLang");
+  sel.textContent = "";
+  for (const [v, label] of UI_OPTIONS) {
+    const o = document.createElement("option");
+    o.value = v;
+    o.textContent = label || xt("uiAuto");
+    sel.appendChild(o);
+  }
+  sel.value = current;
+}
+function applyUi() {
+  xllmApply(document);
+  document.documentElement.lang = xllmLang;
+  buildUiLang($("uiLang").value);
+  renderModels();
+  Object.values(langGetters).forEach((g) => g.relabel());
+}
+$("uiLang").addEventListener("change", async () => {
+  await xllmSetLang($("uiLang").value);
+  applyUi();
+});
 
 const modelSel = $("model"), modelOther = $("modelOther"), modelFilter = $("modelFilter");
 let modelIds = [];
@@ -28,11 +54,11 @@ function renderModels(selected) {
     o.textContent = t;
     modelSel.appendChild(o);
   };
-  add("", modelIds.length ? "Select a model…" : "Click “Load models”");
+  add("", modelIds.length ? xt("selectModel") : xt("clickLoad"));
   const shown = modelIds.filter((id) => !q || id.toLowerCase().includes(q));
   if (cur && !shown.includes(cur)) shown.unshift(cur); // never hide the current choice
   shown.forEach((id) => add(id, id));
-  add("__other__", "Type manually…");
+  add("__other__", xt("typeManually"));
   modelSel.value = wasOther ? "__other__" : cur || "";
   modelOther.hidden = modelSel.value !== "__other__";
   modelFilter.hidden = modelIds.length <= 10;
@@ -52,9 +78,9 @@ async function loadModels(interactive) {
     const has = await chrome.permissions.contains({ origins: [origin] });
     if (!has) {
       if (!interactive) return;
-      if (!(await chrome.permissions.request({ origins: [origin] }))) return status("Permission to reach " + origin + " was denied.");
+      if (!(await chrome.permissions.request({ origins: [origin] }))) return status(xt("permDenied", { origin }));
     }
-    status("Loading models…");
+    status(xt("loadingModels"));
     const headers = {};
     const key = $("apiKey").value.trim();
     if (key) headers.Authorization = "Bearer " + key;
@@ -66,15 +92,20 @@ async function loadModels(interactive) {
     if (!list.length) throw new Error("the server returned no models");
     modelIds = [...new Set(list)].sort((a, b) => a.localeCompare(b));
     renderModels();
-    status(`Loaded ${modelIds.length} models.`);
+    status(xt("loadedModels", { n: modelIds.length }));
   } catch (e) {
-    status(`Could not load models: ${e.message}. You can choose “Type manually…” instead.`);
+    status(xt("loadFail", { err: e.message }));
   }
 }
 $("loadModels").onclick = () => loadModels(true);
 
-chrome.storage.sync.get(DEFAULTS).then((cfg) => {
+chrome.storage.sync.get(DEFAULTS).then(async (cfg) => {
+  await xllmSetLang(cfg.uiLang);
+  buildUiLang(cfg.uiLang);
+  xllmApply(document);
+  document.documentElement.lang = xllmLang;
   ids.forEach((k) => {
+    if (k === "uiLang") return;
     if (langIds.includes(k)) langGetters[k] = xllmLangControl($(k), $(k + "Other"), cfg[k]);
     else if (k === "model") renderModels(cfg.model);
     else $(k).value = cfg[k];
@@ -85,13 +116,13 @@ chrome.storage.sync.get(DEFAULTS).then((cfg) => {
 async function save() {
   const cfg = Object.fromEntries(ids.map((k) => [k, k === "model" ? getModel() : langGetters[k] ? langGetters[k]() : $(k).value.trim()]));
   const missing = langIds.find((k) => !cfg[k]);
-  if (missing) { status("Type a language in the box next to the " + missing + " list."); return false; }
-  if (!cfg.model) { status("Choose a model first (use Load models, or Type manually…)."); return false; }
+  if (missing) { status(xt("typeLang", { field: $(missing + "Label").textContent })); return false; }
+  if (!cfg.model) { status(xt("chooseModel")); return false; }
   const origin = new URL(cfg.baseUrl).origin + "/*";
   const granted = await chrome.permissions.request({ origins: [origin] });
-  if (!granted) { status("Permission to reach " + origin + " was denied."); return false; }
+  if (!granted) { status(xt("permDenied", { origin })); return false; }
   await chrome.storage.sync.set(cfg);
-  status("Saved.");
+  status(xt("saved"));
   return true;
 }
 
@@ -105,8 +136,8 @@ $("test").onclick = async () => {
   const port = chrome.runtime.connect({ name: "llm" });
   port.onMessage.addListener((m) => {
     if (m.type === "delta") out.textContent += m.text;
-    if (m.type === "error") out.textContent = "ERROR: " + m.text;
-    if (m.type === "done") status("Connection OK.");
+    if (m.type === "error") out.textContent = "ERROR: " + (m.code === "no-model" ? xt("errNoModel") : m.text);
+    if (m.type === "done") status(xt("connOk"));
   });
   port.postMessage({ type: "chat", messages: [{ role: "user", content: "Reply with the single word: ok" }] });
 };

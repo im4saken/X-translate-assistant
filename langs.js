@@ -35,7 +35,7 @@ function xllmLangControl(select, other, value, onChange) {
   }
   const o = document.createElement("option");
   o.value = "__other__";
-  o.textContent = "Other… / 其他…";
+  o.textContent = xt("other");
   select.appendChild(o);
 
   const known = XLLM_LANGS.some(([v]) => v === value);
@@ -50,5 +50,7 @@ function xllmLangControl(select, other, value, onChange) {
     if (onChange) onChange();
   });
   other.addEventListener("input", () => onChange && onChange());
-  return () => (select.value === "__other__" ? other.value.trim() : select.value);
+  const get = () => (select.value === "__other__" ? other.value.trim() : select.value);
+  get.relabel = () => { o.textContent = xt("other"); };
+  return get;
 }

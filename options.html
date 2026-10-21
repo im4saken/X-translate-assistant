@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<title>X Translate Assistant settings</title>
+<title>X Translate Assistant</title>
 <style>
   body { font: 14px system-ui, sans-serif; max-width: 560px; margin: 32px auto; padding: 0 16px; }
   label { display: block; margin-top: 14px; font-weight: 600; }
@@ -11,22 +11,25 @@
   pre { background: #f4f4f4; padding: 8px; white-space: pre-wrap; }
 </style>
 <h2>X Translate Assistant</h2>
-<label>Base URL <small>(OpenAI-compatible, ending in /v1)</small>
+<label><span data-i18n="uiLang"></span>
+  <select id="uiLang"></select></label>
+<label><span data-i18n="baseUrl"></span> <small data-i18n="baseUrlHint"></small>
   <input id="baseUrl" placeholder="http://100.x.x.x:11434/v1"></label>
-<label>API key <small>(leave empty if your server doesn't need one)</small>
+<label><span data-i18n="apiKey"></span> <small data-i18n="apiKeyHint"></small>
   <input id="apiKey" type="password"></label>
-<label>Model <small>(click "Load models" to fetch the list from your server)</small>
+<label><span data-i18n="model"></span> <small data-i18n="modelHint"></small>
   <select id="model"></select>
-  <input id="modelOther" hidden placeholder="Model name, e.g. qwen2.5:27b">
-  <input id="modelFilter" hidden placeholder="Filter models…"></label>
-<button id="loadModels" type="button" style="margin-top:6px">Load models</button>
-<label>Default reply language <small>(what "Translate my reply" targets)</small>
+  <input id="modelOther" hidden data-i18n-ph="modelOtherPh">
+  <input id="modelFilter" hidden data-i18n-ph="modelFilterPh"></label>
+<button id="loadModels" type="button" style="margin-top:6px" data-i18n="loadModels"></button>
+<label><span id="defaultLangLabel" data-i18n="defaultLang"></span> <small data-i18n="defaultLangHint"></small>
   <select id="defaultLang"></select>
-  <input id="defaultLangOther" hidden placeholder="Language, e.g. Swahili"></label>
-<label>Summary language
+  <input id="defaultLangOther" hidden data-i18n-ph="langOtherPh"></label>
+<label><span id="summaryLangLabel" data-i18n="summaryLang"></span>
   <select id="summaryLang"></select>
-  <input id="summaryLangOther" hidden placeholder="Language, e.g. Swahili"></label>
-<button id="save">Save</button><button id="test">Test connection</button><span id="status"></span>
+  <input id="summaryLangOther" hidden data-i18n-ph="langOtherPh"></label>
+<button id="save" data-i18n="save"></button><button id="test" data-i18n="test"></button><span id="status"></span>
 <pre id="out" hidden></pre>
+<script src="i18n.js"></script>
 <script src="langs.js"></script>
 <script src="options.js"></script>
