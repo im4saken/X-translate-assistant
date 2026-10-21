@@ -10,9 +10,10 @@
   <style>
     :host { all: initial; }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    #fab { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%;
-      border: 1px solid #536471; background: #000; color: #fff; font-size: 20px; cursor: pointer; z-index: 2147483647; }
-    #panel { position: fixed; right: 80px; top: 50%; transform: translateY(-50%); width: 380px; max-height: 70vh; display: none; flex-direction: column;
+    #fab { position: fixed; left: 0; top: 0; touch-action: none; user-select: none; width: 48px; height: 48px; border-radius: 50%;
+      border: 1px solid #536471; background: #000; color: #fff; font-size: 20px; cursor: grab; z-index: 2147483647; }
+    #fab.drag { cursor: grabbing; }
+    #panel { position: fixed; left: 0; top: 0; width: 380px; max-height: 70vh; display: none; flex-direction: column;
       background: #16181c; color: #e7e9ea; border: 1px solid #2f3336; border-radius: 16px; z-index: 2147483647;
       box-shadow: 0 8px 30px rgba(0,0,0,.5); overflow: hidden; }
     #panel.open { display: flex; }
@@ -55,7 +56,62 @@
 
   chrome.storage.sync.get({ defaultLang: "English", summaryLang: "Chinese" }).then((c) => (lang.value = c.defaultLang));
 
-  $("fab").onclick = () => panel.classList.toggle("open");
+  // Floating button: draggable, position remembered (stored as viewport fractions).
+  const fab = $("fab"), FAB = 48, MARGIN = 8;
+  let pos = { fx: null, fy: 0.5 };
+
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+  function placeFab() {
+    const x = pos.fx == null ? innerWidth - FAB - 20 : pos.fx * innerWidth;
+    const y = pos.fy * innerHeight;
+    fab.style.left = clamp(x, MARGIN, innerWidth - FAB - MARGIN) + "px";
+    fab.style.top = clamp(y, MARGIN, innerHeight - FAB - MARGIN) + "px";
+    placePanel();
+  }
+
+  function placePanel() {
+    const r = fab.getBoundingClientRect();
+    const w = panel.offsetWidth || 380, h = panel.offsetHeight || 0;
+    const left = r.left + FAB / 2 < innerWidth / 2 ? r.right + 12 : r.left - 12 - w;
+    panel.style.left = clamp(left, MARGIN, Math.max(MARGIN, innerWidth - w - MARGIN)) + "px";
+    panel.style.top = clamp(r.top + FAB / 2 - h / 2, MARGIN, Math.max(MARGIN, innerHeight - h - MARGIN)) + "px";
+  }
+
+  chrome.storage.local.get({ fabPos: null }).then((c) => {
+    if (c.fabPos) pos = c.fabPos;
+    placeFab();
+  });
+  placeFab();
+  addEventListener("resize", placeFab);
+
+  let drag = null;
+  fab.addEventListener("pointerdown", (e) => {
+    if (e.button !== 0) return;
+    const r = fab.getBoundingClientRect();
+    drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, sx: e.clientX, sy: e.clientY, moved: false };
+    fab.setPointerCapture(e.pointerId);
+  });
+  fab.addEventListener("pointermove", (e) => {
+    if (!drag) return;
+    if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 5) return;
+    drag.moved = true;
+    fab.classList.add("drag");
+    const x = clamp(e.clientX - drag.dx, MARGIN, innerWidth - FAB - MARGIN);
+    const y = clamp(e.clientY - drag.dy, MARGIN, innerHeight - FAB - MARGIN);
+    fab.style.left = x + "px";
+    fab.style.top = y + "px";
+    pos = { fx: x / innerWidth, fy: y / innerHeight };
+    placePanel();
+  });
+  fab.addEventListener("pointerup", () => {
+    if (!drag) return;
+    const moved = drag.moved;
+    drag = null;
+    fab.classList.remove("drag");
+    if (moved) chrome.storage.local.set({ fabPos: pos });
+    else { panel.classList.toggle("open"); placePanel(); }
+  });
   $("close").onclick = () => panel.classList.remove("open");
   $("gear").onclick = () => chrome.runtime.sendMessage({ type: "openOptions" });
 
@@ -83,6 +139,7 @@
     d.textContent = text;
     log.appendChild(d);
     log.scrollTop = log.scrollHeight;
+    placePanel();
     return d;
   }
 
@@ -102,7 +159,7 @@
     let acc = "";
     port = chrome.runtime.connect({ name: "llm" });
     port.onMessage.addListener((m) => {
-      if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; }
+      if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; placePanel(); }
       if (m.type === "error") { out.className = "msg err"; out.textContent = m.text; finish(); }
       if (m.type === "done") {
         chatHistory = [...messages, { role: "assistant", content: acc }];
