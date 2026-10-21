@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "X LLM Assistant",
+  "version": "1.0.0",
+  "description": "Grok-style helper on X: summarize the post you're reading and translate your reply, using your own OpenAI-compatible LLM.",
+  "permissions": ["storage"],
+  "optional_host_permissions": ["http://*/*", "https://*/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://twitter.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "action": { "default_title": "X LLM Assistant settings" }
+}
