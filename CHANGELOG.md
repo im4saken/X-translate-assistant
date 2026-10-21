@@ -4,6 +4,15 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.3.0] - 2026-10-21
+### Changed / 變更
+- Renamed the extension to "X Translate Assistant" to match the repository (extension name, panel title, settings page, READMEs). The release zip is now named `X-translate-assistant-vX.Y.Z.zip` and unzips to an `X-translate-assistant` folder. Your saved settings are kept if you reload the extension from the same folder; a new folder path counts as a new install and the settings must be entered again.
+  將擴充功能更名為「X Translate Assistant」,與儲存庫名稱一致(擴充功能名稱、視窗標題、設定頁、README)。發佈的 zip 改名為 `X-translate-assistant-vX.Y.Z.zip`,解壓縮後的資料夾為 `X-translate-assistant`。若從同一個資料夾重新載入,設定會保留;若資料夾路徑不同則視為新安裝,需重新輸入設定。
+
+### Added / 新增
+- Testing guide for testers and AI agents, in English and Traditional Chinese (`TESTING.md`, `TESTING.zh-TW.md`).
+  新增給測試者與 AI 代理使用的測試指南,中英雙語(`TESTING.md`、`TESTING.zh-TW.md`)。
+
 ## [1.2.1] - 2026-10-21
 ### Fixed / 修正
 - "Ask" now includes the replies loaded on the page, like "Summarize" does, so questions such as "how many replies?" or "what do the replies think?" can be answered. Found in a browser test.

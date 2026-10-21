@@ -1,6 +1,6 @@
 **English** | [繁體中文](README.zh-TW.md)
 
-# X LLM Assistant
+# X Translate Assistant
 
 A Grok-style helper for x.com that uses **your own** OpenAI-compatible LLM (Ollama, LM Studio, oMLX, llama.cpp server, a hosted API, etc.), so it doesn't use up Grok credits.
 
@@ -23,4 +23,4 @@ Download the latest zip from the [Releases page](https://github.com/im4saken/X-t
 - If the model runs on another machine, use that machine's Tailscale/LAN address instead of `localhost`.
 - Post detection relies on X's current page structure (`data-testid` attributes) and may need updates if X changes it.
 
-See [CHANGELOG.md](CHANGELOG.md) for version history.
+Want to help test? See the [testing guide](TESTING.md). Version history: [CHANGELOG.md](CHANGELOG.md).

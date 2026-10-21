@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "X LLM Assistant",
-  "version": "1.2.1",
+  "name": "X Translate Assistant",
+  "version": "1.3.0",
   "description": "Grok-style helper on X: summarize the post you're reading and translate your reply, using your own OpenAI-compatible LLM.",
   "permissions": ["storage"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],
@@ -14,5 +14,5 @@
     }
   ],
   "options_ui": { "page": "options.html", "open_in_tab": true },
-  "action": { "default_title": "X LLM Assistant settings" }
+  "action": { "default_title": "X Translate Assistant settings" }
 }

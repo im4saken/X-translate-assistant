@@ -1,6 +1,6 @@
 [English](README.md) | **繁體中文**
 
-# X LLM Assistant
+# X Translate Assistant
 
 類似 Grok 的 x.com 輔助工具,改用**你自己的** OpenAI 相容 LLM(Ollama、LM Studio、oMLX、llama.cpp server 或雲端 API 等),不會消耗 Grok 額度。
 
@@ -23,4 +23,4 @@
 - 若模型跑在另一台機器上,請使用該機器的 Tailscale 或區域網路位址,不要用 `localhost`。
 - 貼文偵測依賴 X 目前的頁面結構(`data-testid` 屬性),X 改版後可能需要更新。
 
-版本歷史請見 [CHANGELOG.md](CHANGELOG.md)。
+想幫忙測試?請見[測試指南](TESTING.zh-TW.md)。版本歷史請見 [CHANGELOG.md](CHANGELOG.md)。

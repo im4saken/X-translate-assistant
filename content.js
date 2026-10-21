@@ -34,9 +34,9 @@
     textarea { flex: 1; resize: none; height: 56px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 10px; padding: 8px; font-size: 14px; }
     .actions { margin-top: 6px; display: flex; gap: 6px; }
   </style>
-  <button id="fab" title="X LLM Assistant">✦</button>
+  <button id="fab" title="X Translate Assistant">✦</button>
   <div id="panel">
-    <header><span>X LLM Assistant</span><span><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
+    <header><span>X Translate Assistant</span><span><button id="gear" title="Settings (Base URL, model, API key)">⚙</button><button id="close">✕</button></span></header>
     <div id="log"></div>
     <div class="tools">
       <button id="sum">Summarize this post</button>
