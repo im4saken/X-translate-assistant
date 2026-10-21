@@ -10,9 +10,9 @@
   <style>
     :host { all: initial; }
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    #fab { position: fixed; right: 20px; bottom: 20px; width: 48px; height: 48px; border-radius: 50%;
+    #fab { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); width: 48px; height: 48px; border-radius: 50%;
       border: 1px solid #536471; background: #000; color: #fff; font-size: 20px; cursor: pointer; z-index: 2147483647; }
-    #panel { position: fixed; right: 20px; bottom: 80px; width: 380px; max-height: 70vh; display: none; flex-direction: column;
+    #panel { position: fixed; right: 80px; top: 50%; transform: translateY(-50%); width: 380px; max-height: 70vh; display: none; flex-direction: column;
       background: #16181c; color: #e7e9ea; border: 1px solid #2f3336; border-radius: 16px; z-index: 2147483647;
       box-shadow: 0 8px 30px rgba(0,0,0,.5); overflow: hidden; }
     #panel.open { display: flex; }
