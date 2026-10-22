@@ -175,7 +175,17 @@
     if (!box) { add("err", xt("errNoReplyBox")); return; }
     box.focus();
     document.execCommand("selectAll", false, null);
-    document.execCommand("insertText", false, text);
+    // X's reply box is a Draft.js editor. Editing its DOM directly (insertText) can make the text
+    // look duplicated while its state holds one copy, so go through its own paste handler.
+    let handled = false;
+    try {
+      const dt = new DataTransfer();
+      dt.setData("text/plain", text);
+      const ev = new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true });
+      box.dispatchEvent(ev);
+      handled = ev.defaultPrevented;
+    } catch { /* fall back below */ }
+    if (!handled) document.execCommand("insertText", false, text);
   }
 
   function run(messages, label, keep) {
