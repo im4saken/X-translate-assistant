@@ -68,6 +68,10 @@ REPORT (one block per failure)
 - Screenshot or console output:
 Finish with an overall summary: how many PASS/FAIL/N/A, and your top 3 problems.
 
+NOTE FOR AUTOMATED TESTERS: Chrome only shows the "allow access to your server" prompt in response to a
+real user click (Save, Test connection, Load models). A script-triggered click will fail with "This function must
+be called during a user gesture". Click these buttons for real, or pre-grant the host permission.
+
 RULES: Do not enter secrets in test posts. Do not post anything publicly unless you
 want to. Do not paste your API key into the report.
 ````

@@ -15,6 +15,8 @@
   "errNoLang": "请在列表旁的输入框填入目标语言。",
   "errNoReplyBox": "找不到回复框。请先在帖子上点“回复”,再试一次。",
   "errNoModel": "尚未设置模型,请先打开设置。",
+  "thinking": "思考中…",
+  "errDisconnected": "与扩展后台进程的连接中断(浏览器可能让它进入休眠)。请重试。",
   "sumLabelReplies": "总结这条帖子 + {replies}",
   "scrollHint": "(请先向下滚动以加载更多回复)",
   "translateLabel": "翻译成 {lang}:{draft}",

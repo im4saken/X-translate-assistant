@@ -185,7 +185,19 @@
     const out = add("", "…");
     let acc = "";
     port = chrome.runtime.connect({ name: "llm" });
+    let ended = false;
+    port.onDisconnect.addListener(() => {
+      // The background process went away mid-request (e.g. the browser suspended it): don't hang forever.
+      if (ended) return;
+      ended = true;
+      out.className = "msg err";
+      out.textContent = (acc ? acc + "\n\n" : "") + xt("errDisconnected");
+      busy = false;
+      port = null;
+    });
     port.onMessage.addListener((m) => {
+      if (m.type === "thinking" && !acc) out.textContent = xt("thinking");
+      if (m.type === "error" || m.type === "done") ended = true;
       if (m.type === "delta") { acc += m.text; if (!acc.trim()) return; acc = acc.replace(/^\s+/, ""); out.textContent = acc; log.scrollTop = log.scrollHeight; placePanel(); }
       if (m.type === "error") { out.className = "msg err"; out.textContent = m.code === "no-model" ? xt("errNoModel") : m.text; finish(); }
       if (m.type === "done") {

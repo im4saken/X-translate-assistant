@@ -4,6 +4,19 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.6.1] - 2026-10-22
+### Fixed / 修正
+- Slow models no longer leave the panel stuck on "…" forever. While a request runs, the background process now pings the page every 10 seconds so Chrome does not put it to sleep, and if the connection is lost anyway the panel shows a clear message (keeping any partial answer) and lets you ask again. The settings page's "Test connection" does the same. Found in an end-to-end test with a large thinking model.
+  慢速模型不再讓視窗永遠停在「…」。請求進行時,背景程序每 10 秒向頁面發送一次心跳,避免被 Chrome 休眠;若連線仍中斷,視窗會顯示明確訊息(保留已收到的部分回答)並可重新提問。設定頁的「測試連線」也比照處理。此問題由大型思考型模型的端對端測試發現。
+
+### Added / 新增
+- "Thinking…" is shown while a thinking model is still reasoning, instead of a bare "…".
+  思考型模型仍在推理時,視窗會顯示「思考中…」,而不是只有「…」。
+
+### Docs / 文件
+- Testing guide: note that Chrome's permission prompt needs a real click (relevant for automated testers).
+  測試指南:註明 Chrome 的權限詢問需要真實點擊(對自動化測試者很重要)。
+
 ## [1.6.0] - 2026-10-21
 ### Added / 新增
 - **Interface language** setting: English, Traditional Chinese (繁體中文), Simplified Chinese (简体中文), or "Follow browser language" (the default). It applies to the settings page and the ✦ panel, and changes take effect immediately.

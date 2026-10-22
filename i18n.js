@@ -18,6 +18,8 @@ const XLLM_I18N = {
     errNoLang: "Type the target language in the box next to the list.",
     errNoReplyBox: "Reply box not found. Click Reply on the post first, then try again.",
     errNoModel: "No model set. Open the settings first.",
+    thinking: "Thinking…",
+    errDisconnected: "The connection to the extension's background process was lost (the browser may have put it to sleep). Please try again.",
     sumLabelReplies: "Summarize this post + {replies}",
     scrollHint: " (scroll down first to load more replies)",
     translateLabel: "Translate to {lang}: {draft}",

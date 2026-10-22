@@ -134,7 +134,10 @@ $("test").onclick = async () => {
   out.hidden = false;
   out.textContent = "";
   const port = chrome.runtime.connect({ name: "llm" });
+  let finished = false;
+  port.onDisconnect.addListener(() => { if (!finished) out.textContent = "ERROR: " + xt("errDisconnected"); });
   port.onMessage.addListener((m) => {
+    if (m.type === "error" || m.type === "done") finished = true;
     if (m.type === "delta") out.textContent += m.text;
     if (m.type === "error") out.textContent = "ERROR: " + (m.code === "no-model" ? xt("errNoModel") : m.text);
     if (m.type === "done") status(xt("connOk"));

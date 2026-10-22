@@ -15,6 +15,8 @@
   "errNoLang": "請在清單旁的輸入框填入目標語言。",
   "errNoReplyBox": "找不到回覆框。請先在貼文上按「回覆」,再試一次。",
   "errNoModel": "尚未設定模型,請先開啟設定。",
+  "thinking": "思考中…",
+  "errDisconnected": "與擴充功能背景程序的連線中斷(瀏覽器可能讓它進入休眠)。請再試一次。",
   "sumLabelReplies": "摘要這則貼文 + {replies}",
   "scrollHint": "(請先往下捲動以載入更多回覆)",
   "translateLabel": "翻譯成 {lang}:{draft}",
