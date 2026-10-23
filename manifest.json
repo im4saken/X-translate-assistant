@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "X Translate Assistant",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "description": "Grok-style helper on X: summarize the post you're reading and translate your reply, using your own OpenAI-compatible LLM.",
   "permissions": ["storage"],
   "optional_host_permissions": ["http://*/*", "https://*/*"],

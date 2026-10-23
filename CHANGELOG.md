@@ -4,6 +4,17 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
+## [1.6.2] - 2026-10-23
+### Fixed / 修正
+- "Insert into reply box" no longer makes the reply look duplicated (X's reply box is a Draft.js editor, and writing into it directly could show the text twice while it held one copy). The text is now inserted through the editor's own paste handling, replacing whatever was in the box, and the editor is nudged to re-read its content so a quick send cannot post stale text. Found by a user report; verified in a real-browser test.
+  「插入回覆框」不再讓回覆內容看起來重複(X 的回覆框是 Draft.js 編輯器,直接寫入可能讓畫面顯示兩份、實際只有一份)。現在改走編輯器自己的貼上流程,取代框內原有內容,並促使編輯器重新讀取內容,避免快速送出時貼出舊文字。此問題由使用者回報,並經真實瀏覽器測試驗證。
+- Dragging the ✦ button no longer logs an error when the browser reports a pointer that is already gone.
+  拖曳 ✦ 按鈕時,若瀏覽器回報的指標已不存在,不再產生錯誤訊息。
+
+### Notes / 備註
+- If X's reply dialog is open, X keeps keyboard focus inside it, so close the dialog before typing in the ✦ panel (or type first, then open the dialog).
+  若 X 的回覆對話框已開啟,X 會把鍵盤焦點鎖在對話框內;請先關閉對話框再於 ✦ 視窗輸入(或先輸入再開啟對話框)。
+
 ## [1.6.1] - 2026-10-22
 ### Fixed / 修正
 - Slow models no longer leave the panel stuck on "…" forever. While a request runs, the background process now pings the page every 10 seconds so Chrome does not put it to sleep, and if the connection is lost anyway the panel shows a clear message (keeping any partial answer) and lets you ask again. The settings page's "Test connection" does the same. Found in an end-to-end test with a large thinking model.
