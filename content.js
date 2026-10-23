@@ -109,7 +109,7 @@
     if (e.button !== 0) return;
     const r = fab.getBoundingClientRect();
     drag = { dx: e.clientX - r.left, dy: e.clientY - r.top, sx: e.clientX, sy: e.clientY, moved: false };
-    fab.setPointerCapture(e.pointerId);
+    try { fab.setPointerCapture(e.pointerId); } catch { /* synthetic pointer: dragging still works */ }
   });
   fab.addEventListener("pointermove", (e) => {
     if (!drag) return;
@@ -189,6 +189,16 @@
         handled = ev.defaultPrevented;
       } catch { /* fall back below */ }
       if (!handled) document.execCommand("insertText", false, text);
+      // X's editor state can lag behind the DOM after a paste (seconds on long text) and a quick
+      // send would post the old content. A focus change makes it re-read, so bounce focus and
+      // put the caret back at the end.
+      setTimeout(() => {
+        box.blur();
+        box.focus();
+        const sel = getSelection();
+        sel.selectAllChildren(box);
+        sel.collapseToEnd();
+      }, 50);
     }, 80);
   }
 
