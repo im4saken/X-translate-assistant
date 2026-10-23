@@ -51,5 +51,6 @@
   "typeLang": "請在「{field}」旁的輸入框填入語言。",
   "selectModel": "請選擇模型…",
   "clickLoad": "請按「載入模型」",
-  "typeManually": "手動輸入…"
+  "typeManually": "手動輸入…",
+  "focusHint": "X 的回覆視窗已開啟並鎖住鍵盤焦點,在這裡打字可能會跑進它的輸入框。請先在這裡輸入草稿,再開啟回覆視窗並按「插入回覆框」。"
 }

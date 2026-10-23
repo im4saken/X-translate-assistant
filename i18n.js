@@ -19,6 +19,7 @@ const XLLM_I18N = {
     errNoReplyBox: "Reply box not found. Click Reply on the post first, then try again.",
     errNoModel: "No model set. Open the settings first.",
     thinking: "Thinking…",
+    focusHint: "X's reply window is open and keeps the keyboard focus, so typing here may land in it. Type your draft here first, then open the reply window and click Insert.",
     errDisconnected: "The connection to the extension's background process was lost (the browser may have put it to sleep). Please try again.",
     sumLabelReplies: "Summarize this post + {replies}",
     scrollHint: " (scroll down first to load more replies)",

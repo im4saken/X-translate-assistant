@@ -32,6 +32,7 @@
     .tools input { width: 130px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 8px; padding: 4px 8px; font-size: 13px; }
     .row { display: flex; gap: 6px; padding: 8px 14px 12px; border-top: 1px solid #2f3336; }
     textarea { flex: 1; resize: none; height: 56px; background: #000; color: #e7e9ea; border: 1px solid #536471; border-radius: 10px; padding: 8px; font-size: 14px; }
+    #hint { margin: 0 14px 8px; padding: 6px 10px; border-radius: 8px; background: #2a2410; color: #f5d56b; font-size: 12px; line-height: 1.4; }
     .actions { margin-top: 6px; display: flex; gap: 6px; }
   </style>
   <button id="fab" title="X Translate Assistant">✦</button>
@@ -44,6 +45,7 @@
       <select id="lang" data-i18n-title="langTip"></select>
       <input id="langOther" hidden data-i18n-ph="langOtherPh">
     </div>
+    <div id="hint" hidden data-i18n="focusHint"></div>
     <div class="row">
       <textarea id="input" data-i18n-ph="inputPh"></textarea>
       <button id="send" data-i18n="ask"></button>
@@ -129,9 +131,19 @@
     drag = null;
     fab.classList.remove("drag");
     if (moved) chrome.storage.local.set({ fabPos: pos });
-    else { panel.classList.toggle("open"); placePanel(); }
+    else { panel.classList.toggle("open"); placePanel(); checkDialog(); }
   });
   $("close").onclick = () => panel.classList.remove("open");
+
+  // While X's reply dialog is open it traps keyboard focus, so typing in our box can land in
+  // X's box instead. Warn while the panel is open and that dialog is up.
+  const hint = $("hint");
+  function checkDialog() {
+    const dialogOpen = !!document.querySelector('[role="dialog"] [data-testid="tweetTextarea_0"]');
+    const show = panel.classList.contains("open") && dialogOpen;
+    if (hint.hidden === show) { hint.hidden = !show; placePanel(); }
+  }
+  setInterval(checkDialog, 1000);
   // Clear: stop any running request, empty the log and forget the conversation.
   $("clear").onclick = () => {
     if (port) finish();
