@@ -4,7 +4,7 @@ All notable changes to this project are documented here. / 本專案的重要變
 Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
 格式參考 Keep a Changelog,版本號遵循 SemVer。
 
-## [Unreleased]
+## [1.6.3] - 2026-10-23
 ### Added / 新增
 - The ✦ panel shows a hint while X's reply window is open, because X keeps keyboard focus inside that window and typing in the panel can land in X's box instead.
   X 的回覆視窗開啟時,✦ 視窗會顯示提示:X 會把鍵盤焦點鎖在該視窗內,在 ✦ 視窗打字可能會跑進 X 的輸入框。
